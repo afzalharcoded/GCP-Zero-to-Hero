@@ -1,97 +1,110 @@
-# Day-02: GCP Project Setup and Billing
+# 🔐 GCP IAM Fundamentals for Beginners 
+
+## 🧭 What is IAM?
+
+IAM (Identity and Access Management) in GCP is a framework that controls:
+- **Who** can do **what** on **which resources**
+
+Formula:
+Who → Can do what → On which resource?
+
+It's crucial for securely managing access in a cloud environment.
 
 ---
 
-## What You Will Learn Today
+## 🧱 Core Concepts
 
-- GCP Hierarchy
-- What is a GCP project and why it's needed
-- How billing accounts work in GCP
-- Setting budget alerts to avoid unexpected charges
-- Enabling APIs required for your workloads
-
----
-
-## GCP Hierarchy
-
-<img width="1024" height="1024" alt="GCP Resource Hierarchy Flowchart" src="https://github.com/user-attachments/assets/c1d9b947-bf12-4b30-9df6-df3491dc01a8" />
-
-## Understanding GCP Projects
-
-In GCP, everything you create (VMs, buckets, databases, etc.) lives inside a **project**.
-
-- Think of a **project** as a folder where all your cloud resources are grouped.
-- Every project has its own billing, IAM roles, and API settings.
-- You can have multiple projects under the same billing account.
-
-Use-case:
-- One project for payments team.
-- Another for shipment team.
+| Component      | Description |
+|----------------|-------------|
+| **Identity**   | A user, group, domain, or service account |
+| **Role**       | A collection of permissions |
+| **Policy**     | A binding of identities to roles |
+| **Resource**   | Any GCP object like a project, VM, bucket, etc. |
 
 ---
 
-## Billing Accounts in GCP
+## 🎭 Types of Roles
 
-When you signed up for the free tier, a billing account was automatically created and linked to your default project.
-
-Important points:
-- A single billing account can be linked to multiple projects.
-- If your free credits expire, charges will start applying only if you manually upgrade.
-
----
-
-## Task 1: Create a New Project
-
-1. Go to the GCP Console: https://console.cloud.google.com
-2. From the top bar, click on the project dropdown
-3. Click **New Project**
-4. Give it a name like `gcp-zero-to-hero`
-5. Select your billing account and create
-
-This is the project we will use for all future labs.
+| Role Type      | Description | Example |
+|----------------|-------------|---------|
+| **Basic Roles**| Broad, legacy roles (not recommended) | Owner, Editor, Viewer |
+| **Predefined** | Fine-grained, service-specific roles | `roles/storage.admin` |
+| **Custom**     | You define exact permissions | Only `compute.instances.start` |
 
 ---
 
-## Task 2: Set Budget Alerts
+## 🧬 IAM Policy Hierarchy
 
-Budget alerts help you track usage and avoid surprises.
+IAM roles can be assigned at different levels:
 
-Steps:
+- **Organization**
+- **Folder**
+- **Project**
+- **Resource**
 
-1. Go to Billing → Budgets & alerts
-2. Click **Create Budget**
-3. Set a budget limit (example: ₹1000)
-4. Configure email alerts at 50%, 90%, and 100%
-
-Note: These are just alerts. GCP won't stop services automatically.
+**Note**: Permissions **inherit** from parent to child unless explicitly overridden.
 
 ---
 
-## Task 3: Enable APIs for Core Services
+## 🤖 Service Accounts
 
-APIs must be enabled before you can use many GCP services.
+- **Service accounts** are non-human identities used by apps, scripts, or pipelines.
+- Example: Cloud Build uses a service account to deploy apps to GKE.
 
-Recommended APIs to enable now:
+---
 
-- Compute Engine API
-- Cloud Storage API
-- Cloud Logging API
-- Cloud Monitoring API
-- Cloud Resource Manager API
-- IAM Service Account Credentials API
+## 🛡️ IAM Best Practices for DevOps
 
-Steps:
+- ✅ Follow **Least Privilege** principle
+- 🚫 Avoid **Basic Roles** (too broad)
+- 🔐 Use **Service Accounts** for automation
+- 🔁 Rotate keys/secrets regularly
+- 📊 Audit permissions frequently
 
-1. Go to **APIs & Services → Library**
-2. Search each API by name and click **Enable**
+---
 
-Alternatively, use Cloud Shell:
+## 🧪 Hands-On Lab
 
-```bash
-gcloud services enable compute.googleapis.com \
-    storage.googleapis.com \
-    monitoring.googleapis.com \
-    logging.googleapis.com \
-    cloudresourcemanager.googleapis.com \
-    iamcredentials.googleapis.com
-```
+### 🔧 Lab 1: Create Project & Assign Viewer Role
+
+    export PROJECT_ID="devops-iam-demo-$(date +%s)"
+    gcloud projects create $PROJECT_ID
+    gcloud config set project $PROJECT_ID
+
+    gcloud projects add-iam-policy-binding $PROJECT_ID \
+      --member="user:devops.engineer@example.com" \
+      --role="roles/viewer"
+
+---
+
+### 🔧 Lab 2: Create a Service Account & Grant Role
+
+    gcloud iam service-accounts create devops-bot \
+      --display-name="DevOps Pipeline Bot"
+
+    gcloud projects add-iam-policy-binding $PROJECT_ID \
+      --member="serviceAccount:devops-bot@$PROJECT_ID.iam.gserviceaccount.com" \
+      --role="roles/cloudbuild.builds.editor"
+
+---
+
+## 📦 Real-World DevOps Scenario
+
+**Use Case**:  
+Your Cloud Build pipeline should deploy to GKE but NOT delete clusters.
+
+**Solution**:
+- Create a **Custom Role** with only `container.deployments.create`
+- Assign that role to a **Service Account**
+- Use that Service Account in your CI/CD pipeline
+
+---
+
+## ✅ Key Takeaways
+
+- IAM is foundational for secure access in GCP.
+- Use **Predefined or Custom Roles** — avoid basic roles.
+- Service accounts are key to **DevOps automation**.
+- **Always enforce least privilege and audit regularly.**
+
+---
