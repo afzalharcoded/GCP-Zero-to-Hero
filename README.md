@@ -1,78 +1,97 @@
-# Day-01: Introduction to Cloud and GCP
+# Day-02: GCP Project Setup and Billing
 
 ---
 
 ## What You Will Learn Today
 
-- What is Cloud Computing?
-- Difference between Cloud and Traditional IT
-- Why choose Google Cloud (GCP) over AWS or Azure?
-- Create your Free GCP Account
-- Quick Tour: GCP Console and Cloud Shell
+- GCP Hierarchy
+- What is a GCP project and why it's needed
+- How billing accounts work in GCP
+- Setting budget alerts to avoid unexpected charges
+- Enabling APIs required for your workloads
 
 ---
 
-## Concepts Simplified
+## GCP Hierarchy
 
-### What is Cloud Computing?
+<img width="1024" height="1024" alt="GCP Resource Hierarchy Flowchart" src="https://github.com/user-attachments/assets/c1d9b947-bf12-4b30-9df6-df3491dc01a8" />
 
-Cloud computing means renting servers, databases, storage, and other services over the internet instead of owning them.
+## Understanding GCP Projects
 
-In simple words:  
-> "You pay only for what you use. No upfront investment, no maintenance headache."
+In GCP, everything you create (VMs, buckets, databases, etc.) lives inside a **project**.
 
-**Cloud providers**: Google Cloud (GCP), Amazon Web Services (AWS), Microsoft Azure
+- Think of a **project** as a folder where all your cloud resources are grouped.
+- Every project has its own billing, IAM roles, and API settings.
+- You can have multiple projects under the same billing account.
 
----
-
-### Traditional IT vs Cloud
-
-| Traditional IT                | Cloud (GCP)                       |
-|------------------------------|-----------------------------------|
-| Buy servers upfront           | Rent what you need                |
-| Pay for peak capacity         | Auto-scale as needed              |
-| Manual setup                  | Automated provisioning            |
-| High maintenance              | Managed by Google                 |
+Use-case:
+- One project for payments team.
+- Another for shipment team.
 
 ---
 
-### Why GCP?
+## Billing Accounts in GCP
 
-- Google-level infrastructure (same as YouTube, Gmail)
-- Powerful networking and AI services
-- Easy to use UI + powerful CLI
-- Cost-effective and beginner-friendly
-- Used by gaints like META
+When you signed up for the free tier, a billing account was automatically created and linked to your default project.
 
----
-
-## Task: Create Your Free GCP Account
-
-1. Go to: https://cloud.google.com/free
-2. Sign in with your Gmail
-3. Provide PAN and card details or UPI
-
-✅ No charges unless you upgrade manually.
+Important points:
+- A single billing account can be linked to multiple projects.
+- If your free credits expire, charges will start applying only if you manually upgrade.
 
 ---
 
-## Task: Explore GCP Console and Cloud Shell
+## Task 1: Create a New Project
 
-### GCP Console
+1. Go to the GCP Console: https://console.cloud.google.com
+2. From the top bar, click on the project dropdown
+3. Click **New Project**
+4. Give it a name like `gcp-zero-to-hero`
+5. Select your billing account and create
 
-- URL: [https://console.cloud.google.com](https://console.cloud.google.com)
-- Everything you need is here: compute, storage, billing, IAM, etc.
+This is the project we will use for all future labs.
 
-### Cloud Shell
+---
 
-- Built-in terminal in your browser
-- Free VM with 5GB storage
-- Comes pre-installed with `gcloud` CLI
+## Task 2: Set Budget Alerts
 
-🔍 Try this:
+Budget alerts help you track usage and avoid surprises.
+
+Steps:
+
+1. Go to Billing → Budgets & alerts
+2. Click **Create Budget**
+3. Set a budget limit (example: ₹1000)
+4. Configure email alerts at 50%, 90%, and 100%
+
+Note: These are just alerts. GCP won't stop services automatically.
+
+---
+
+## Task 3: Enable APIs for Core Services
+
+APIs must be enabled before you can use many GCP services.
+
+Recommended APIs to enable now:
+
+- Compute Engine API
+- Cloud Storage API
+- Cloud Logging API
+- Cloud Monitoring API
+- Cloud Resource Manager API
+- IAM Service Account Credentials API
+
+Steps:
+
+1. Go to **APIs & Services → Library**
+2. Search each API by name and click **Enable**
+
+Alternatively, use Cloud Shell:
+
 ```bash
-gcloud auth list
-gcloud config list
+gcloud services enable compute.googleapis.com \
+    storage.googleapis.com \
+    monitoring.googleapis.com \
+    logging.googleapis.com \
+    cloudresourcemanager.googleapis.com \
+    iamcredentials.googleapis.com
 ```
-
----
